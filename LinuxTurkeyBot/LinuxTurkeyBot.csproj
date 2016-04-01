@@ -103,13 +103,15 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Engine\CommandManager.cs" />
     <Compile Include="Engine\Config.cs" />
-    <Compile Include="Engine\MessageHelpers.cs" />
+    <Compile Include="Engine\ConfigKey.cs" />
+    <Compile Include="Engine\EngineHelpers.cs" />
     <Compile Include="Engine\User.cs" />
     <Compile Include="Engine\Admin.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -122,7 +124,9 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

@@ -5,22 +5,22 @@ namespace LinuxTurkeyBot.Engine
 {
     public class User : CommandManager
     {
-        public static CommandManager Manager { get; } = new User();
+        public static CommandManager Manager = new User();
 
         public User()
         {
-            Config.Commands.Add("sudo", "Yes sir!");
-            Config.Commands.Add("ultimate question of life the universe and everything", "Unauthorized");
-            Config.Commands.Add("sudo ultimate question of life the universe and everything", "42");
-            Config.Commands.Add("hayat evren ve her şeye dair nihai sorunun cevabı", "Yetkiniz yok");
-            Config.Commands.Add("sudo hayat evren ve her şeye dair nihai sorunun cevabı", "42");
-            Config.Commands.Add("merhaba", "Merhaba ?user?");
-            Config.Commands.Add("selam", "Selam ?user?");
-            Config.Commands.Add("nasılsın", "Depresyondayım, sen?");
-            Config.Commands.Add("naber", "İyilik senden?");
-            Config.Commands.Add("hey", "Yo!");
-            Config.Commands.Add("windows severmisin", "Seni dışarı alalım ?user?");
-            Config.Commands.Add("napıyon", "kali kuruyorum, hack yapcam");
+            Config.Current.Commands.Add("sudo", "Yes sir!");
+            Config.Current.Commands.Add("ultimate question of life the universe and everything", "Unauthorized");
+            Config.Current.Commands.Add("sudo ultimate question of life the universe and everything", "42");
+            Config.Current.Commands.Add("hayat evren ve her şeye dair nihai sorunun cevabı", "Yetkiniz yok");
+            Config.Current.Commands.Add("sudo hayat evren ve her şeye dair nihai sorunun cevabı", "42");
+            Config.Current.Commands.Add("merhaba", "Merhaba ?user?");
+            Config.Current.Commands.Add("selam", "Selam ?user?");
+            Config.Current.Commands.Add("nasılsın", "Depresyondayım, sen?");
+            Config.Current.Commands.Add("naber", "İyilik senden?");
+            Config.Current.Commands.Add("hey", "Yo!");
+            Config.Current.Commands.Add("windows severmisin", "Seni dışarı alalım ?user?");
+            Config.Current.Commands.Add("napıyon", "kali kuruyorum, hack yapcam");
 
             Actions.Add("hack", MatrixHack);
         }

@@ -5,35 +5,35 @@ using Microsoft.Bot.Connector;
 
 namespace LinuxTurkeyBot.Engine
 {
-    public class Admin : CommandManager
+    public class Admin : User
     {
-        public static CommandManager Manager { get; } = new Admin();
+        public new static CommandManager Manager = new Admin();
 
         public Admin()
         {
-            Actions.Add(".clear", Clear);
-            Actions.Add(".msg", Msg);
-            Actions.Add(".addreply", AddReply);
-            Actions.Add(".removereply", RemoveReply);
-            Actions.Add(".help", AdminHelp);
-            Actions.Add(".addadmin", AddAdmin);
-            Actions.Add(".sethistorycount", SetHistoryCount);
-            Actions.Add(".userdata", UserData);
-            Actions.Add(".removeadmin", RemoveAdmin);
-            Actions.Add(".removealladmins", RemoveAllAdmins);
+            Actions.Add("clearhistory",     ClearHistory);
+            Actions.Add("history",          History);
+            Actions.Add("addreply",         AddReply);
+            Actions.Add("removereply",      RemoveReply);
+            Actions.Add("help",             AdminHelp);
+            Actions.Add("addadmin",         AddAdmin);
+            Actions.Add("historycount",     HistoryCount);
+            Actions.Add("userdata",         UserData);
+            Actions.Add("removeadmin",      RemoveAdmin);
+            Actions.Add("removealladmins",  RemoveAllAdmins);
         }
 
         private Message RemoveAllAdmins(Message message)
         {
-            Config.AdminList.Clear();
-            Config.AdminList.Add(Config.GlobalAdmin);
+            Config.Current.AdminList.Clear();
+            Config.Current.AdminList.AddRange(ConfigKey.BotAdminIdList);
             return message.Reply("Adminler temizlendi.");
         }
 
         private Message UserData(Message message)
         {
             var command = message.Text.Replace(message.Text.Split(' ').First(), "").Trim();
-            var users = Config.UserMessages.Where(s => s.From.Name.ToLower().Contains(command)).Select(s => s.From);
+            var users = Config.Current.UserMessages.Where(s => s.From.Name.ToLower().Contains(command)).Select(s => s.From);
 
             var builder = new StringBuilder();
             foreach (var channelAccount in users)
@@ -47,9 +47,9 @@ namespace LinuxTurkeyBot.Engine
         private Message RemoveReply(Message message)
         {
             var command = message.Text.Replace(message.Text.Split(' ').First(), "").Trim();
-            if (Config.Commands.ContainsKey(command))
+            if (Config.Current.Commands.ContainsKey(command))
             {
-                Config.Commands.Remove(command);
+                Config.Current.Commands.Remove(command);
 
                 return message.Reply($"`{command}` komutu kaldırıldı.");
             }
@@ -57,13 +57,13 @@ namespace LinuxTurkeyBot.Engine
             return message.Reply("Kaldırılacak komut bulunamadı");
         }
 
-        private Message SetHistoryCount(Message message)
+        private Message HistoryCount(Message message)
         {
             int maxHistory;
             if (!int.TryParse(message.Text.Split(' ').LastOrDefault() ?? string.Empty, out maxHistory))
                 maxHistory = 10;
 
-            Config.MaxHistory = maxHistory;
+            Config.Current.MaxHistory = maxHistory;
             return message.Reply($"Geçmişe eklenecek kayıt sayısı {maxHistory} olarak ayarlandı.");
         }
 
@@ -76,9 +76,9 @@ namespace LinuxTurkeyBot.Engine
 
             foreach (var userId in userIds)
             {
-                if (!Config.AdminList.Contains(userId))
+                if (!Config.Current.AdminList.Contains(userId))
                 {
-                    Config.AdminList.Add(userId);
+                    Config.Current.AdminList.Add(userId);
                 }
             }
 
@@ -92,7 +92,7 @@ namespace LinuxTurkeyBot.Engine
             if (userIds.Length <= 0)
                 message.Reply("Kullanıcı bilgisi gerekli.");
 
-            var users = userIds.Where(s => Config.AdminList.Contains(s) && !s.Equals(Config.GlobalAdmin)).ToList();
+            var users = userIds.Where(s => Config.Current.AdminList.Contains(s) && !s.Equals(Config.GlobalAdmin)).ToList();
 
             if (users.Any())
             {
@@ -120,7 +120,7 @@ namespace LinuxTurkeyBot.Engine
             return message.Reply("Hatalı Format! `/.addreply Hello|Hello ?user?`");
         }
 
-        private Message Msg(Message message)
+        private Message History(Message message)
         {
             if(Config.UserMessages.Any())
                 return message.Reply(FormattedUserMessages());
@@ -128,7 +128,7 @@ namespace LinuxTurkeyBot.Engine
             return message.Reply("Geçmiş boş");
         }
 
-        private Message Clear(Message message)
+        private Message ClearHistory(Message message)
         {
             Config.UserMessages.Clear();
             return message.Reply("Geçmiş silindi!");

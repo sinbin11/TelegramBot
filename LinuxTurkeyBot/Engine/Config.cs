@@ -1,14 +1,33 @@
 using System.Collections.Generic;
+using System.IO;
 using Microsoft.Bot.Connector;
+using Newtonsoft.Json;
 
 namespace LinuxTurkeyBot.Engine
 {
-    public static class Config
+    public class Config
     {
-        public const string GlobalAdmin = "2BF1HdTSJBr";
-        public static int MaxHistory { get; set; } = 10;
-        public static List<Message> UserMessages { get; } = new List<Message>();
-        public static List<string> AdminList { get; set; } = new List<string>(new []{ GlobalAdmin, "2c1c7fa3" });
-        public static Dictionary<string, string> Commands { get; } = new Dictionary<string, string>();
+        public static Config Current { get; set; } = new Config();
+        public List<string> BotNames { get; set; } = ConfigKey.BotNameList;
+        public List<string> AdminList { get; set; } = ConfigKey.BotAdminIdList;
+        public List<Message> UserMessages { get; } = new List<Message>();
+        public Dictionary<string, string> Commands { get; } = new Dictionary<string, string>();
+        public int MaxHistory { get; set; } = 10;
+
+        public Config()
+        {
+            Restore();
+        }
+
+        public void Save()
+        {
+            File.WriteAllText(ConfigKey.ConfigPath, JsonConvert.SerializeObject(this));
+        }
+
+        public void Restore()
+        {
+            if (File.Exists(ConfigKey.ConfigPath))
+                Current = JsonConvert.DeserializeObject<Config>(File.ReadAllText(ConfigKey.ConfigPath));
+        }
     }
 }
