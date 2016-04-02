@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using Newtonsoft.Json;
 
-namespace LinuxTurkeyBot.Engine
+namespace LinuxTurkeyBot.Config
 {
     public static class ConfigKey
     {
@@ -10,7 +10,7 @@ namespace LinuxTurkeyBot.Engine
         private const string adminId = "AdminId";
         private const string configPath = "ConfigPath";
 
-        public static List<string> BotNameList => GetList(botName);
+        public static string BotName => ConfigurationManager.AppSettings[botName];
         public static List<string> BotAdminIdList => GetList(adminId);
         public static string ConfigPath => ConfigurationManager.AppSettings[configPath];
 

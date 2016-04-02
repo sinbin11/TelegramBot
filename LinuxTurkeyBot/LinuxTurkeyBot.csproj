@@ -42,6 +42,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CommandLine, Version=2.0.275.0, Culture=neutral, PublicKeyToken=de6f01bd326f8c32, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommandLineParser.2.0.275-beta\lib\net45\CommandLine.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Bot.Connector, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bot.Connector.1.0.0.0\lib\net45\Microsoft.Bot.Connector.dll</HintPath>
       <Private>True</Private>
@@ -101,13 +105,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Engine\CommandManager.cs" />
-    <Compile Include="Engine\Config.cs" />
-    <Compile Include="Engine\ConfigKey.cs" />
-    <Compile Include="Engine\EngineHelpers.cs" />
-    <Compile Include="Engine\User.cs" />
-    <Compile Include="Engine\Admin.cs" />
+    <Compile Include="Engine\BotHelper.cs" />
+    <Compile Include="Engine\ICommand.cs" />
+    <Compile Include="Options\SaveConfig.cs" />
+    <Compile Include="Options\WhoAmI.cs" />
+    <Compile Include="Config\Config.cs" />
+    <Compile Include="Config\ConfigKey.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
+    <Compile Include="Engine\OptionContainer.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -124,9 +129,7 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
