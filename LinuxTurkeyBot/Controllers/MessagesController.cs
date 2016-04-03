@@ -8,6 +8,8 @@ namespace LinuxTurkeyBot.Controllers
     {
         public Message Post([FromBody]Message message)
         {
+            if(message.From.IsBot != false) return null;
+
             return message.Type == "Message" ? message.Run() : HandleSystemMessage(message);
         }
 

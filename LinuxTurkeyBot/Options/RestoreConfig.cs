@@ -5,8 +5,8 @@ using Microsoft.Bot.Connector;
 
 namespace LinuxTurkeyBot.Options
 {
-    [Verb("saveconfig", HelpText = "This utility can be used to save current setting")]
-    public class SaveConfig : ICommand
+    [Verb("restoreconfig", HelpText = "This utility can be used to restore saved config")]
+    public class RestoreConfig : ICommand
     {
         public Message Respond(Message message, Parser parser, Type[] commands)
         {
@@ -14,12 +14,12 @@ namespace LinuxTurkeyBot.Options
 
             try
             {
-                Config.Config.Current.Save();
-                return message.CreateReplyMessage("Save Success");
+                Config.Config.Current.Restore();
+                return message.CreateReplyMessage("Restore Success");
             }
-            catch(Exception)
+            catch (Exception)
             {
-                return message.CreateReplyMessage("Save Failed");
+                return message.CreateReplyMessage("Restre Failed");
             }
         }
     }

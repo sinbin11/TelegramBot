@@ -11,7 +11,7 @@ namespace LinuxTurkeyBot.Config
         private const string configPath = "ConfigPath";
 
         public static string BotName => ConfigurationManager.AppSettings[botName];
-        public static List<string> BotAdminIdList => GetList(adminId);
+        public static HashSet<string> BotAdminIdList => new HashSet<string>(GetList(adminId));
         public static string ConfigPath => ConfigurationManager.AppSettings[configPath];
 
         private static List<string> GetList(string key)

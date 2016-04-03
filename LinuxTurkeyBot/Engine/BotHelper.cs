@@ -11,56 +11,72 @@ namespace LinuxTurkeyBot.Engine
 {
     public static class BotHelper
     {
+        public static Parser Parser { get; set; } = new Parser(settings =>
+        {
+            settings.CaseSensitive = false;
+            settings.EnableDashDash = false;
+            settings.IgnoreUnknownArguments = false;
+            settings.ParsingCulture = CultureInfo.InvariantCulture;
+        });
+
         public static Message Run(this Message message)
         {
-            if(OptionContainer.Options.Count <= 0)
-                return null;
+            var request = message.Text.TrimmedLower();
 
-            var parser = new Parser(settings =>
+            if (request.Equals("help") && message.From.IsAdmin())
+                return message.CreateReplyMessage(HelpGenerator().ToString());
+
+            var parse = Parser.ParseArguments(CommandLineToArgs(request), OptionContainer.Options.ToArray());
+            var parseObject = (parse as Parsed<object>)?.Value as ICommand;
+
+            var response = parseObject?.Respond(message, Parser, OptionContainer.Options.ToArray());
+            if (response != null)
+                return response;
+
+            var messageResponse = Config.Config.Current.Responses.FirstOrDefault(s => s.Key.Match(request)).Value;
+
+            return messageResponse != null ? message.CreateReplyMessage(messageResponse) : null;
+        }
+
+        private static StringWriter HelpGenerator()
+        {
+            var helpWriter = new StringWriter();
+
+            foreach (var option in OptionContainer.Options)
             {
-                settings.CaseSensitive = false;
-                settings.EnableDashDash = false;
-                settings.IgnoreUnknownArguments = true;
-                settings.ParsingCulture = CultureInfo.InvariantCulture;
-            });
+                var verb = option.GetCustomAttribute<VerbAttribute>();
+                if (verb == null)
+                    continue;
 
-            if (message.Text.Trim().ToLower().Equals("help"))
-            {
-                var helpWriter = new StringWriter();
-
-                foreach (var option in OptionContainer.Options)
+                helpWriter.WriteLine($"`{verb.Name}` : {verb.HelpText}");
+                helpWriter.WriteLine();
+                var properties = option.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+                foreach (var property in properties)
                 {
-                    var verb = option.GetCustomAttribute<VerbAttribute>();
-                    if(verb == null)
+                    var opt = property.GetCustomAttribute<OptionAttribute>();
+                    if (opt == null)
                         continue;
 
-                    helpWriter.WriteLine($"`{verb.Name}` : {verb.HelpText}");
+                    helpWriter.WriteLine($"`-{opt.ShortName}` : {opt.HelpText}");
                     helpWriter.WriteLine();
-                    var properties = option.GetProperties(BindingFlags.Instance | BindingFlags.Public);
-                    foreach (var property in properties)
-                    {
-                        var opt = property.GetCustomAttribute<OptionAttribute>();
-                        if(opt == null)
-                            continue;
-
-                        helpWriter.WriteLine($"`-{opt.ShortName}` : {opt.HelpText}");
-                        helpWriter.WriteLine();
-                    }
                 }
-
-                return message.CreateReplyMessage(helpWriter.ToString());
             }
+            return helpWriter;
+        }
 
-            var parse = parser.ParseArguments(CommandLineToArgs(message.Text), OptionContainer.Options.ToArray());
+        public static bool Match(this string value, string to)
+        {
+            return value.Split(' ').All(m => to.Split(' ').Any(s => s.Contains(m)));
+        }
 
-            if (parse.Tag == ParserResultType.NotParsed)
-            {
-                return Config.Config.Current.Responses.Where(s => s.Key.Split(' ').All(m => message.Text.Split(' ').Any(k => k.Contains(m))))
-                    .Select(s => message.CreateReplyMessage(s.Value)).FirstOrDefault();
-            }
+        public static bool IsAdmin(this ChannelAccount account)
+        {
+            return Config.Config.Current.AdminList.Any(s => s.Equals(account.Id));
+        }
 
-            return ((parse as Parsed<object>)?.Value as ICommand)?.Respond(message, parser, OptionContainer.Options.ToArray());
-
+        public static string TrimmedLower(this string str)
+        {
+            return str.Trim().ToLower();
         }
 
         [DllImport("shell32.dll", SetLastError = true)]
