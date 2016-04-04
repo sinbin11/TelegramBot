@@ -7,7 +7,9 @@ namespace LinuxTurkeyBot.Config
 {
     public class Config
     {
-        public static string Path { get; } = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/data.json");
+        public static FileInfo Path { get; } =
+            new FileInfo(System.Web.HttpContext.Current.Server.MapPath("~/App_Data/data.json"));
+
         public static Config Current { get; set; } = new Config();
 
         public string BotName { get; set; } = ConfigKey.BotName;
@@ -23,16 +25,19 @@ namespace LinuxTurkeyBot.Config
 
         public void Save()
         {
-            if(!File.Exists(Path))
-                File.Create(Path).Close();
+            if (Path.Directory?.Exists == false)
+                Path.Directory?.Create();
 
-            File.WriteAllText(Path, JsonConvert.SerializeObject(Current, Formatting.None));
+            if (!Path.Exists)
+                Path.Create().Close();
+
+            File.WriteAllText(Path.FullName, JsonConvert.SerializeObject(Current, Formatting.None));
         }
 
         public void Restore()
         {
-            if(File.Exists(Path))
-                Current = JsonConvert.DeserializeObject<Config>(File.ReadAllText(Path)) ?? Current;
+            if (Path.Exists)
+                Current = JsonConvert.DeserializeObject<Config>(File.ReadAllText(Path.FullName)) ?? Current;
         }
     }
 }

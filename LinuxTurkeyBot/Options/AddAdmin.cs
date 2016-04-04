@@ -13,7 +13,7 @@ namespace LinuxTurkeyBot.Options
 
         public Message Respond(Message message, Parser parser, Type[] commands)
         {
-            if (!message.From.IsAdmin()) return null;
+            if (!message.From.IsAdmin() || string.IsNullOrEmpty(Id)) return null;
             Config.Config.Current.AdminList.Add(Id);
 
             return message.CreateReplyMessage($"`{Id}` added");
