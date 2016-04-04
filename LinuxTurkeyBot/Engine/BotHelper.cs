@@ -21,19 +21,17 @@ namespace LinuxTurkeyBot.Engine
 
         public static Message Run(this Message message)
         {
-            var request = message.Text.TrimmedLower();
-
-            if (request.Equals("help") && message.From.IsAdmin())
+            if (message.Text.TrimmedLower().Equals("help") && message.From.IsAdmin())
                 return message.CreateReplyMessage(HelpGenerator().ToString());
 
-            var parse = Parser.ParseArguments(CommandLineToArgs(request), OptionContainer.Options.ToArray());
+            var parse = Parser.ParseArguments(CommandLineToArgs(message.Text), OptionContainer.Options.ToArray());
             var parseObject = (parse as Parsed<object>)?.Value as ICommand;
 
             var response = parseObject?.Respond(message, Parser, OptionContainer.Options.ToArray());
             if (response != null)
                 return response;
 
-            var messageResponse = Config.Config.Current.Responses.FirstOrDefault(s => s.Key.Match(request)).Value;
+            var messageResponse = Config.Config.Current.Responses.FirstOrDefault(s => s.Key.Match(message.Text.TrimmedLower())).Value;
 
             return messageResponse != null ? message.CreateReplyMessage(messageResponse) : null;
         }
