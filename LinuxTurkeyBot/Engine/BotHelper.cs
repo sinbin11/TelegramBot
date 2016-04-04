@@ -21,6 +21,8 @@ namespace LinuxTurkeyBot.Engine
 
         public static Message Run(this Message message)
         {
+            if (!message.From.IsAdmin() && Config.Config.Current.IgnoreList.Any(m => m.Equals(message.From.Id))) return null;
+
             if (message.Text.TrimmedLower().Equals("help") && message.From.IsAdmin())
                 return message.CreateReplyMessage(HelpGenerator().ToString());
 

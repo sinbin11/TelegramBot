@@ -118,6 +118,7 @@
     <Compile Include="Engine\ICommand.cs" />
     <Compile Include="Options\AddAdmin.cs" />
     <Compile Include="Options\AddPattern.cs" />
+    <Compile Include="Options\IgnorePattern.cs" />
     <Compile Include="Options\ListPatterns.cs" />
     <Compile Include="Options\RemoveAdmin.cs" />
     <Compile Include="Options\RemovePattern.cs" />

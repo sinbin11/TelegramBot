@@ -5,7 +5,7 @@ using Microsoft.Bot.Connector;
 
 namespace LinuxTurkeyBot.Options
 {
-    [Verb("removepattern", HelpText = "Add new pattern for conversation")]
+    [Verb("removepattern", HelpText = "Remove pattern from conversation")]
     public class RemovePattern : ICommand
     {
         [Option('k', HelpText = "Keyword")]

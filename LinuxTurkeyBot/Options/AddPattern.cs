@@ -18,8 +18,10 @@ namespace LinuxTurkeyBot.Options
         {
             if (!message.From.IsAdmin()) return null;
 
-            Config.Config.Current.Responses.Add(Keyword, Response);
+            if (string.IsNullOrEmpty(Keyword) || Keyword.Length < 5)
+                return message.CreateReplyMessage("It's looks like harrasment.");
 
+            Config.Config.Current.Responses.Add(Keyword, Response);
             return message.CreateReplyMessage($"`{Keyword}` added");
         }
     }

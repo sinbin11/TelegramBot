@@ -8,15 +8,14 @@ namespace LinuxTurkeyBot.Config
     public class Config
     {
         public static FileInfo Path { get; } =
-            new FileInfo(System.Web.HttpContext.Current.Server.MapPath("~/App_Data/data.json"));
+            new FileInfo(System.Web.HttpContext.Current.Server.MapPath(ConfigKey.ConfigPath));
 
         public static Config Current { get; set; } = new Config();
 
         public string BotName { get; set; } = ConfigKey.BotName;
         public HashSet<string> AdminList { get; set; } = ConfigKey.BotAdminIdList;
-        public List<Message> UserMessages { get; } = new List<Message>();
+        public List<string> IgnoreList { get; } = new List<string>();
         public Dictionary<string, string> Responses { get; } = new Dictionary<string, string>();
-        public int MaxHistory { get; set; } = 10;
 
         static Config()
         {
